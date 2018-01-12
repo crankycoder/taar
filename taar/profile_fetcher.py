@@ -21,8 +21,8 @@ class ProfileFetcher:
             logger.error("Client profile not found", extra={"client_id": client_id})
             return None
 
-        addon_ids = [addon['addon_id'] for addon in profile_data['active_addons']
-                     if not addon.get('is_system', False)]
+        addon_ids = [addon['addon_id'] for addon in profile_data['active_addons']]
+
         return {
             "geo_city": profile_data.get("city"),
             "subsession_length": profile_data.get("subsession_length"),
