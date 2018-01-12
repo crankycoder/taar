@@ -24,10 +24,10 @@ class ProfileFetcher:
         addon_ids = [addon['addon_id'] for addon in profile_data['active_addons']]
 
         return {
-            "geo_city": profile_data.get("city"),
-            "subsession_length": profile_data.get("subsession_length"),
-            "locale": profile_data.get('locale'),
-            "os": profile_data.get("os"),
+            "geo_city": profile_data.get("city", ''),
+            "subsession_length": profile_data.get("subsession_length", 0),
+            "locale": profile_data.get('locale', ''),
+            "os": profile_data.get("os", ''),
             "installed_addons": addon_ids,
             "disabled_addons_ids": profile_data.get("disabled_addons_ids", []),
             "bookmark_count": profile_data.get("places_bookmarks_count", 0),
