@@ -1,21 +1,22 @@
 import logging
-from .hbase_client import HBaseClient
+from .adapters.dynamo import ProfileController
 
 
 logger = logging.getLogger(__name__)
 
 
-class ProfileFetcher:
-    """ Fetch the latest information for a client on HBase.
+class ProfileFetcher(object):
+    """ Fetch the latest information for a client on the backing
+    datastore
     """
-    def __init__(self, hbase_client=None):
-        if hbase_client is None:
-            self.hbase_client = HBaseClient()
+    def __init__(self, client=None):
+        if client is None:
+            self.client = ProfileController()
         else:
-            self.hbase_client = hbase_client
+            self.client = client
 
     def get(self, client_id):
-        profile_data = self.hbase_client.get_client_profile(client_id)
+        profile_data = self.client.get_client_profile(client_id)
 
         if profile_data is None:
             logger.error("Client profile not found", extra={"client_id": client_id})
