@@ -10,7 +10,8 @@ logger = logging.getLogger(__name__)
 
 
 class RecommendationManager(object):
-    """A class representing a collection of recommenders."""
+    """This class determines which of the set of recommendation
+    engines will actually be used to generate recommendations."""
 
     def __init__(self, profile_fetcher=None, recommenders=None):
         """Initialize the user profile fetcher and the recommenders.
