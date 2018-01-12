@@ -1,1 +1,1 @@
-from taar.profile_fetcher import ProfileFetcher
+from .profile_fetcher import ProfileFetcher
