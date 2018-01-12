@@ -1,7 +1,15 @@
 from taar.profile_fetcher import ProfileFetcher
 from taar.recommenders import RecommendationManager
 from taar.recommenders.base_recommender import BaseRecommender
-from taar import hbase_client
+# TODO: pull the MockProfileController out into a testing base module
+
+
+class MockProfileController(object):
+    def __init__(self, mock_profile):
+        self._profile = mock_profile
+
+    def get_client_profile(self, client_id):
+        return self._profile
 
 
 class StubRecommender(BaseRecommender):
@@ -18,22 +26,16 @@ class StubRecommender(BaseRecommender):
         return self._recommendations
 
 
-def test_none_profile_returns_empty_list(monkeypatch):
-    monkeypatch.setattr(hbase_client.HBaseClient,
-                        'get_client_profile',
-                        lambda x, y: None)
-
-    monkeypatch.setattr(hbase_client.HBaseClient,
-                        '_get_hbase_hostname',
-                        lambda x: 'master-ip-address')
-
-    fetcher = ProfileFetcher()
-
+def test_none_profile_returns_empty_list():
+    fetcher = ProfileFetcher(MockProfileController(None))
     rec_manager = RecommendationManager(fetcher, ("fake-recommender", ))
     assert rec_manager.recommend("random-client-id", 10) == []
 
 
 def test_recommendation_strategy():
+    """The recommendation manager is currently very naive and just
+    selects the first recommender which returns 'True' to
+    can_recommend()."""
     EXPECTED_ADDONS = ["expected_id", "other-id"]
 
     # Create a stub ProfileFetcher that always returns the same
