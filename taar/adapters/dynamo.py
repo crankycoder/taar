@@ -28,7 +28,7 @@ class ProfileController(object):
         """This fetches a single client record out of DynamoDB
         """
         response = self._table.get_item(Key={'client_id': client_id})
-        return response['Item']
+        return json.loads(response['Item']['json_payload'])
 
     def put_client_profile(self, json_blob):
         """Store a single data record
