@@ -7,16 +7,12 @@ class ProfileController(object):
     This class
     """
 
-    def __init__(self, local_instance=False):
+    def __init__(self, region_name, table_name):
         """
         Configure access to the DynamoDB isntance
         """
-        if local_instance:
-            self._ddb = boto3.resource('dynamodb', endpoint_url='http://localhost:8000')
-        else:
-            self._ddb = boto3.resource('dynamodb')
-
-        self._table = self._ddb.Table('taar_addon_data')
+        self._ddb = boto3.resource('dynamodb', region_name=region_name)
+        self._table = self._ddb.Table(table_name)
 
     def list_tables(self):
         return list(self._ddb.tables.all())
