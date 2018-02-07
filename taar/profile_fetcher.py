@@ -1,6 +1,4 @@
 import logging
-from .adapters.dynamo import ProfileController
-
 
 logger = logging.getLogger(__name__)
 
@@ -9,11 +7,8 @@ class ProfileFetcher(object):
     """ Fetch the latest information for a client on the backing
     datastore
     """
-    def __init__(self, client=None):
-        if client is None:
-            self.client = ProfileController()
-        else:
-            self.client = client
+    def __init__(self, client):
+        self.client = client
 
     def get(self, client_id):
         profile_data = self.client.get_client_profile(client_id)
