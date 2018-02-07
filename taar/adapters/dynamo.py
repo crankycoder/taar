@@ -1,5 +1,5 @@
 import boto3
-import datetime
+import json
 
 
 class ProfileController(object):
@@ -17,8 +17,9 @@ class ProfileController(object):
     def list_tables(self):
         return list(self._ddb.tables.all())
 
-    def scan_table(self):
-        """Dump the entire dynamoDB table
+    def _scan_table(self):
+        """Dump the entire dynamoDB table.  This is almost certainly a
+        bad thing to do.
         """
         response = self._table.scan()
         items = response['Items']
@@ -50,35 +51,3 @@ class ProfileController(object):
         with self._table.batch_writer() as batch:
             for rec in records:
                 batch.put_item(Item=rec)
-
-
-if __name__ == '__main__':
-    pc = ProfileController(local_instance=True)
-    print(pc.list_tables())
-
-    blobs = []
-    for i in range(100):
-        client_id = "%d_%s" % (i, datetime.datetime.now().isoformat())
-        blob = {"client_id": client_id,
-                "bookmark_count": 5,
-                "disabled_addon_ids": ["disabled1", "disabled2"],
-                "geo_city": "Toronto",
-                "installed_addons": ["active1", "active2"],
-                "locale": "en-CA",
-                "os": "Mac OSX",
-                "profile_age_in_weeks": 5,
-                "profile_date": "2018-Jan-08",
-                "submission_age_in_weeks": 5,
-                "submission_date": "2018-Jan-09",
-                "subsession_length": 20,
-                "tab_open_count": 10,
-                "total_uri": 9,
-                "unique_tlds": 5}
-        blobs.append(blob)
-
-    pc.batch_put_clients(blobs)
-    print("------- Table Scan and delete below ----------")
-    for i, rec in enumerate(pc.scan_table()):
-        print("Deleting: %s" % rec['client_id'])
-        pc.delete(rec['client_id'])
-    print("Deleted %d records" % (i + 1))
