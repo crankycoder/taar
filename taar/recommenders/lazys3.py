@@ -30,6 +30,21 @@ class LazyJSONLoader:
 
         self.logger.info("{} loader is initialized".format(self._key_str))
 
+    def __getstate__(self):
+        # We need to override the pickling feature to work around
+        # serialization of locks
+        state = self.__dict__.copy()
+        del state['_lock']
+        return state
+
+    def __setstate__(self, state):
+        # We need to override the pickling feature to work around
+        # serialization of locks
+        self.__dict__.update(state)
+
+        # Add the lock back since it doesn't exist in the pickle
+        self._lock = threading.RLock()
+
     def force_expiry(self):
         msg = "Existing model for {} reset to 0. Model was:".format(
             self._key_str, str(self._cached_copy)
